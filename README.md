@@ -11,10 +11,11 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 
     # 请用 python3.6 以上版本运行
     python3 main.py --env=local
-    curl "http://localhost:8000"
+    # browser open http://localhost:8000/
 
 # TO DO
 - [x] framework
+- [x] http rest api
 - [ ] json body parser
 - [ ] async ES backend
 - [ ] async influxdb backend
@@ -23,5 +24,3 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 - [ ] unittest
 - [ ] directory document
 - [ ] docker file
-
-

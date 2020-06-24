@@ -4,7 +4,7 @@ from sanic_envconfig import EnvConfig
 
 class BasicSettings(EnvConfig):
     DEBUG: bool = True
-    HOST: str = '0.0.0.0'
+    HOST: str = 'localhost'
     PORT: int = 8000
     WORKERS: int = 1
     PROJECT_NAME: str = "HostMonitor"
