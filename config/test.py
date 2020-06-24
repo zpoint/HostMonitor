@@ -4,7 +4,7 @@ from config.basic import BasicSettings
 
 
 class Settings(BasicSettings):
-    ES_HOST = ""
+    ES_HOST = "bw"
     ES_PORT = ""
 
     INFLUX_HOST = ""

@@ -42,9 +42,7 @@ class Code(metaclass=CodeType):
     UNAUTHORIZED = (401, '未认证')
     FORBIDDEN = (403, '无权限')
     NOTFOUND = (404, '数据不存在')
-    SYSTEM_ERROR = (500, '服务器开小差了，请稍后重试~')  # 系统错误
+    SYSTEM_ERROR = (500, '系统错误')
 
-    # 全局的业务代码，以 10 开头
-    PARAM_MISS = (20000, u'参数缺失！')
-    PARAM_ERROR = (30000, u'参数错误！')
+    CurrentlyNotSupport = (50000, "当前未实现该操作")
 

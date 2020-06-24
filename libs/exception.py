@@ -8,7 +8,7 @@ def customer_exception_handler(request, exception):
     if isinstance(exception, ValidationError):
         data = {
             'result': False,
-            'errormsg': exception.message,
+            'message': exception.message,
             'resultcode': exception.code,
             'data': exception.data
         }
@@ -24,7 +24,29 @@ def customer_exception_handler(request, exception):
 
         data = {
             'result': False,
-            'errormsg': errormsg,
+            'message': errormsg,
+            'resultcode': Code.SYSTEM_ERROR.code,
+            'data': exc_data,
+        }
+        return response.json(data, status=Code.SYSTEM_ERROR.code)
+
+
+def customer_rest_exception_handler(exception):
+    if isinstance(exception, ValidationError):
+        data = {
+            'result': False,
+            'message': exception.message,
+            'resultcode': exception.code,
+            'data': exception.data
+        }
+        return response.json(data, status=exception.status_code)
+    else:
+        errormsg = Code.SYSTEM_ERROR.message
+        exc_data = None
+
+        data = {
+            'result': False,
+            'message': errormsg,
             'resultcode': Code.SYSTEM_ERROR.code,
             'data': exc_data,
         }
