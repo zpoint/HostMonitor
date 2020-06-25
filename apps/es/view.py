@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
-from sanic_restplus import Resource
 from libs.rest import RestAssoc
 from libs.exception import Code
-from query.query_factory import QueryFactory
+from libs.resource import ESResource
 ns = RestAssoc.ns_es
 api = RestAssoc.api
 name = "es"
 
 
 @ns.route('/node')
-class ESNodes(Resource):
+class ESNodes(ESResource):
     @ns.doc('list_all')
     async def get(self, request):
         """
         list all nodes in a cluster
         """
-        query = QueryFactory.create_query(name)
-        return await query.list()
+        return await self.get_result("list", index="")
 
     @ns.doc('malloc_new_node')
     async def post(self, request):
@@ -27,14 +25,13 @@ class ESNodes(Resource):
 
 
 @ns.route('/index')
-class ESList(Resource):
+class ESList(ESResource):
     @ns.doc('list_all_index')
     async def get(self, request):
         """
         list all indexes in a cluster
         """
-        query = QueryFactory.create_query(name, request.json)
-        return await query.search_meta()
+        return await self.get_result("search_meta", request.json, index="")
 
     @ns.doc('create_new_index')
     @ns.param("json body", "json body", _in="body", example={
@@ -44,10 +41,7 @@ class ESList(Resource):
         """
         create a new index in a cluster
         """
-        json_body = {"index": request.json["index"], "body": request.json}
-        del request.json["index"]
-        query = QueryFactory.create_query(name, json_body)
-        return await query.create_meta()
+        return await self.get_result("create_meta", request.json, index=request.json["index"])
 
     @ns.doc('delete_given_index')
     @ns.param("index", "index name", _in="query", default="twitter")
@@ -55,37 +49,25 @@ class ESList(Resource):
         """
         delete a given index
         """
-        query_dict = dict(request.query_args)
-        query = QueryFactory.create_query(name, query_dict)
-        res = await query.delete_meta()
-        if "status" in res:
-            return res, res["status"]
-        else:
-            return res
+        return await self.get_result("delete_meta", **dict(request.query_args))
 
 
 @ns.route('/<index:string>')
-@ns.param('index', 'The index name')
-class ESData(Resource):
+@ns.param('index', 'The index name', default="twitter")
+class ESData(ESResource):
     """act as a proxy and delegate your CRUD query to the real backend"""
 
     @ns.doc('get_data')
     async def get(self, request, index):
         """Fetch given resource"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.search_data()
+        return await self.get_result("search_data", request.json)
 
     @ns.doc('delete_data')
     async def delete(self, request, index):
         """Delete data in a given index by it's query"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.delete_data()
+        return await self.get_result("delete_data", request.json)
 
     @ns.doc('update_data')
     async def put(self, request, index):
         """forward DSL to given index"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.update_data()
+        return await self.get_result("update_data", request.json)

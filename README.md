@@ -30,7 +30,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
     │   ├── local.py
     │   ├── settings.py
     │   └── test.py
-    ├── libs  // 框架公共库, 数据库连接单例, 连接池, 错误码, 中间件注册等
+    ├── libs  // 框架公共库, 数据库连接单例, 连接池, 错误码, 日志格式, 中间件注册等
     │   ├── code.py
     │   ├── db_util.py
     │   ├── exception.py
@@ -39,14 +39,14 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
     │   ├── middlewares.py
     │   ├── rest.py
     │   └── useful.py
-    ├── logs // 日志目录
+    ├── logs // 访问/应用日志目录
     │   ├── access.log
     │   └── app.log
-    ├── main.py // 程序主文件
+    ├── main.py // 服务主文件
     ├── middlewares // 中间件方法
     ├── operator_ // operator 类
     ├── parser // 解析器类
-    ├── query // query 类, 由 query 封装针对不同数据库的连接查询接口, 提供统一方法暴露给上层调用者
+    ├── query // 实现 query 抽象方法类, 由 query 封装针对不同数据库的连接查询接口, 提供统一方法暴露给上层调用者
     │   ├── base_query.py
     │   ├── es_query.py
     │   ├── influx_query.py
@@ -68,9 +68,9 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 - [x] http rest api
 - [x] async ES backend
 - [x] async influxdb backend
-- [ ] json body parser
-- [ ] query factory / abstract method
-- [ ] operator
+- [x] json body parser
+- [x] query factory / abstract method
+- [x] operator
 - [ ] unittest
 - [x] directory document
 - [ ] docker file

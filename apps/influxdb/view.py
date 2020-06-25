@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from sanic_restplus import Resource
+from libs.resource import InfluxResource
 from libs.rest import RestAssoc
 from libs.exception import Code
-from query.query_factory import QueryFactory
 ns = RestAssoc.ns_influx
 api = RestAssoc.api
 name = "influx"
 
 
 @ns.route('/node')
-class InFluxNodes(Resource):
+class InFluxNodes(InfluxResource):
     @ns.doc('list_all')
     async def get(self, request):
         """
@@ -26,14 +25,13 @@ class InFluxNodes(Resource):
 
 
 @ns.route('/db')
-class InFluxDBs(Resource):
+class InFluxDBs(InfluxResource):
     @ns.doc('list_all_database')
     async def get(self, request):
         """
         list all databases
         """
-        query = QueryFactory.create_query(name, {"db": "default"})
-        return await query.list()
+        return await self.get_result("list", type="database", measurement="")
 
     @ns.doc('malloc_new_database')
     @ns.param("json body", "json body", _in="body", example={"db": "testdb"})
@@ -41,8 +39,7 @@ class InFluxDBs(Resource):
         """
         create a new database
         """
-        query = QueryFactory.create_query(name, request.json)
-        return await query.create_meta()
+        return await self.get_result("create_meta", request.json, type="database", **request.json)
 
     @ns.doc('delete_database')
     @ns.param("json body", "json body", _in="body", example={"db": "testdb"})
@@ -50,46 +47,38 @@ class InFluxDBs(Resource):
         """
         drop a database
         """
-        query = QueryFactory.create_query(name, request.json)
-        return await query.delete_meta()
+        return await self.get_result("delete_meta", request.json, type="database")
 
 
 @ns.route('/<db:string>')
-class InFluxList(Resource):
+@ns.param('db', 'The database name', default="testdb")
+class InFluxList(InfluxResource):
     @ns.doc('list_all_measurement')
     async def get(self, request, db):
         """
         list all measurements in a db
         """
-        type_ = "measurement"
-        query = QueryFactory.create_query(name, {"db": "default"})
-        return await query.list(type_)
+        return await self.get_result("list", db=db, type="measurement")
 
     @ns.doc('create_new_db')
     async def put(self, request, db):
         """
         create a new database in a db
         """
-        type_ = "database"
-        json_body = {"db": db}
-        json_body.update(request.json)
-        query = QueryFactory.create_query(name, json_body)
-        return await query.create_meta(type_=type_)
+        return await self.get_result("create_meta", db=db, type="database")
 
     @ns.doc('delete_given_database')
     async def delete(self, request, db):
         """
         delete a given database
         """
-        type_ = "database"
-        json_body = {"db": db}
-        query = QueryFactory.create_query(name, json_body)
-        res = await query.delete_meta(type_=type_)
-        return res
+        return await self.get_result("delete_meta", db=db, type="database")
 
 
 @ns.route('/<db:string>/<measurement:string>')
-class InFluxList(Resource):
+@ns.param('db', 'The database name', default="testdb")
+@ns.param('measurement', 'The measurement name', default="cpu_load")
+class InFluxList(InfluxResource):
     @ns.doc('create_new_measurement')
     @ns.param("json body", "json body", _in="body", example={
         'time': '2009-11-10T23:00:00Z',
@@ -101,49 +90,35 @@ class InFluxList(Resource):
     })
     async def put(self, request, db, measurement):
         """
-        create a new database/measurement in a db
+        create a new measurement in a db
         """
-        type_ = "measurement"
-        json_body = {"db": db}
-        json_body["measurement"] = measurement
-        json_body.update(request.json)
-        query = QueryFactory.create_query(name, json_body)
-        return await query.create_meta(type_=type_)
+        return await self.get_result("create_meta", request.json, db=db, measurement=measurement, type="measurement")
 
     @ns.doc('delete_given_measurement')
     async def delete(self, request, db, measurement):
         """
         delete a given measurement
         """
-        type_ = "measurement"
-        json_body = {"db": db}
-        json_body["measurement"] = measurement
-        query = QueryFactory.create_query(name, json_body)
-        res = await query.delete_meta(type_=type_)
-        return res
+        return await self.get_result("delete_meta", db=db, measurement=measurement, type="measurement")
 
 
 @ns.route('/<db:string>/<measurement:string>/crud')
-class InFluxData(Resource):
+@ns.param('db', 'The database name', default="testdb")
+@ns.param('measurement', 'The measurement name', default="cpu_load")
+class InFluxData(InfluxResource):
     """act as a proxy and delegate your CRUD query to the real backend"""
 
     @ns.doc('get_data')
-    async def get(self, request, index):
-        """Fetch given resource"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.search_data()
+    async def get(self, request, db, measurement):
+        """Fetch given resource in measurement"""
+        return await self.get_result("search_data", request.json, db=db, measurement=measurement)
 
     @ns.doc('delete_data')
-    async def delete(self, request, index):
-        """Delete data in a given index by it's query"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.delete_data()
+    async def delete(self, request, db, measurement):
+        """Delete data in a given measurement by it's query"""
+        return await self.get_result("delete_data", request.json, db=db, measurement=measurement)
 
     @ns.doc('update_data')
-    async def put(self, request, index):
+    async def put(self, request, db, measurement):
         """insert data"""
-        request.json["index"] = index
-        query = QueryFactory.create_query(name, request.json)
-        return await query.update_data()
+        return await self.get_result("update_data", request.json, db=db, measurement=measurement)

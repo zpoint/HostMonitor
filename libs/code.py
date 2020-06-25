@@ -36,6 +36,12 @@ class CodeType(type):
         return obj
 
 
+class MissingRequiredParam(ValidationError):
+    def __init__(self, param, code=50001, **kwargs):
+        super().__init__(code=code, **kwargs)
+        self.message = u"缺少必填参数: %s" % (param, )
+
+
 class Code(metaclass=CodeType):
 
     SUCCESS = (200, 'SUCCESS')
@@ -45,4 +51,4 @@ class Code(metaclass=CodeType):
     SYSTEM_ERROR = (500, '系统错误')
 
     CurrentlyNotSupport = (50000, "当前未实现该操作")
-
+    MissingRequiredParam = MissingRequiredParam
