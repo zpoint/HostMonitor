@@ -1,7 +1,7 @@
 # HostMonitor
 monitor metadata of influxdb and ES, rest api support for CRUD metadata and results
 
-* 
+![framework](./HostMonitor.png)
 
 # Install
 
@@ -15,7 +15,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 # TO DO
 - [x] framework
 - [x] http rest api
-- [ ] async ES backend
+- [x] async ES backend
 - [ ] async influxdb backend
 - [ ] json body parser
 - [ ] query factory / abstract method

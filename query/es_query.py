@@ -23,7 +23,7 @@ class ESQuery(Query):
         search meta data
         :return:
         """
-        pass
+        return await DBUtil.es.cat.indices(format="json")
 
     async def search_data(self):
         """
@@ -39,6 +39,15 @@ class ESQuery(Query):
         """
         pass
 
+    async def insert_meta(self):
+        """
+        insert meta data
+        :return:
+        """
+        index = self.param["index"]
+        body = self.param["body"]
+        return await DBUtil.es.index(index, body)
+
     async def update_data(self):
         """
         update data
@@ -51,7 +60,8 @@ class ESQuery(Query):
         delete meta data
         :return:
         """
-        pass
+        index = self.param["index"]
+        return await DBUtil.es.indices.delete(index=index, ignore=[400, 404])
 
     async def delete_data(self):
         """
@@ -65,5 +75,4 @@ class ESQuery(Query):
         show cluster info
         :return:
         """
-        nodes = DBUtil.es.nodes
-        return await nodes.info()
+        return await DBUtil.es.nodes.info()
