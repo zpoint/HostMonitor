@@ -30,6 +30,7 @@ class RestAssoc(object):
                    description='monitor metadata of influxdb and ES, rest api support for CRUD metadata and results')
     ns_es: namespace = api.namespace('es', description='ElasticSearch operations')
     ns_influx: namespace = api.namespace('influx', description='InfluxDB operations')
+    mix: namespace = api.namespace('mix', description='Mix ElasticSearch and InfluxDB operations')
     api._default_error_handler = customer_rest_exception_handler
 
 

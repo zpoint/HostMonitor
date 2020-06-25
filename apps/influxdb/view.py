@@ -54,40 +54,73 @@ class InFluxDBs(Resource):
         return await query.delete_meta()
 
 
-@ns.route('/<db:string>/<measurement:string>')
 @ns.route('/<db:string>')
 class InFluxList(Resource):
     @ns.doc('list_all_measurement')
-    async def get(self, request, db, measurement):
+    async def get(self, request, db):
         """
         list all measurements in a db
         """
-        query = QueryFactory.create_query(name, request.json)
-        return await query.search_meta()
+        type_ = "measurement"
+        query = QueryFactory.create_query(name, {"db": "default"})
+        return await query.list(type_)
 
+    @ns.doc('create_new_db')
+    async def put(self, request, db):
+        """
+        create a new database in a db
+        """
+        type_ = "database"
+        json_body = {"db": db}
+        json_body.update(request.json)
+        query = QueryFactory.create_query(name, json_body)
+        return await query.create_meta(type_=type_)
+
+    @ns.doc('delete_given_database')
+    async def delete(self, request, db):
+        """
+        delete a given database
+        """
+        type_ = "database"
+        json_body = {"db": db}
+        query = QueryFactory.create_query(name, json_body)
+        res = await query.delete_meta(type_=type_)
+        return res
+
+
+@ns.route('/<db:string>/<measurement:string>')
+class InFluxList(Resource):
     @ns.doc('create_new_measurement')
+    @ns.param("json body", "json body", _in="body", example={
+        'time': '2009-11-10T23:00:00Z',
+        'tags': {
+            'host': 'server01',
+            'region': 'us-west'
+        },
+        'fields': {'value': 0.64}
+    })
     async def put(self, request, db, measurement):
         """
-        create a new index in a cluster
+        create a new database/measurement in a db
         """
-        json_body = {"index": request.json["index"], "body": request.json}
-        del request.json["index"]
+        type_ = "measurement"
+        json_body = {"db": db}
+        json_body["measurement"] = measurement
+        json_body.update(request.json)
         query = QueryFactory.create_query(name, json_body)
-        return await query.create_meta()
+        return await query.create_meta(type_=type_)
 
-    @ns.doc('delete_given_index')
-    @ns.param("index", "index name", _in="query", default="twitter")
-    async def delete(self, request, measurement):
+    @ns.doc('delete_given_measurement')
+    async def delete(self, request, db, measurement):
         """
-        delete a given index
+        delete a given measurement
         """
-        query_dict = dict(request.query_args)
-        query = QueryFactory.create_query(name, query_dict)
-        res = await query.delete_meta()
-        if "status" in res:
-            return res, res["status"]
-        else:
-            return res
+        type_ = "measurement"
+        json_body = {"db": db}
+        json_body["measurement"] = measurement
+        query = QueryFactory.create_query(name, json_body)
+        res = await query.delete_meta(type_=type_)
+        return res
 
 
 @ns.route('/<db:string>/<measurement:string>/crud')

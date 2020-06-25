@@ -7,7 +7,7 @@ class Query(object):
     def __init__(self, parsed_param):
         self.param = parsed_param
 
-    async def create_meta(self):
+    async def create_meta(self, type_=None):
         """
         create meta data according to param
         :return:
@@ -21,7 +21,7 @@ class Query(object):
         """
         raise Code.CurrentlyNotSupport
 
-    async def search_meta(self):
+    async def search_meta(self, type_=None):
         """
         search meta data
         :return:
@@ -35,7 +35,7 @@ class Query(object):
         """
         raise Code.CurrentlyNotSupport
 
-    async def update_meta(self):
+    async def update_meta(self, type_=None):
         """
         update meta data
         :return:
@@ -49,7 +49,7 @@ class Query(object):
         """
         raise Code.CurrentlyNotSupport
 
-    async def delete_meta(self):
+    async def delete_meta(self, type_=None):
         """
         delete meta data
         :return:

@@ -17,6 +17,9 @@ class InfluxQuery(Query):
         if type_ == "database":
             db = self.param["db"]
             return await self.db_instance.create_database(db=db)
+        elif type_ == "measurement":
+            del self.param["db"]
+            return await self.db_instance.write(self.param)
         raise NotImplementedError("type: %s not implemented" % (type_, ))
 
     async def create_data(self):
@@ -26,7 +29,7 @@ class InfluxQuery(Query):
         """
         pass
 
-    async def search_meta(self):
+    async def search_meta(self, type_=None):
         """
         search meta data
         :return:
@@ -40,7 +43,7 @@ class InfluxQuery(Query):
         """
         pass
 
-    async def update_meta(self):
+    async def update_meta(self, type_=None):
         """
         update meta data
         :return:
@@ -62,6 +65,9 @@ class InfluxQuery(Query):
         if type_ == "database":
             db = self.param["db"]
             return await self.db_instance.drop_database(db=db)
+        elif type_ == "measurement":
+            measurement = self.param["measurement"]
+            return await self.db_instance.drop_measurement(measurement)
         raise NotImplementedError("type: %s not implemented" % (type_,))
 
     async def delete_data(self):
@@ -78,4 +84,6 @@ class InfluxQuery(Query):
         """
         if type_ == "database":
             return await self.db_instance.show_databases()
+        elif type_ == "measurement":
+            return await self.db_instance.show_measurements()
         raise NotImplementedError("type: %s not implemented" % (type_, ))
