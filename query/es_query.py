@@ -9,7 +9,9 @@ class ESQuery(Query):
         create meta data according to param
         :return:
         """
-        pass
+        index = self.param["index"]
+        body = self.param["body"]
+        return await DBUtil.es.index(index, body)
 
     async def create_data(self):
         """
@@ -39,15 +41,6 @@ class ESQuery(Query):
         """
         pass
 
-    async def insert_meta(self):
-        """
-        insert meta data
-        :return:
-        """
-        index = self.param["index"]
-        body = self.param["body"]
-        return await DBUtil.es.index(index, body)
-
     async def update_data(self):
         """
         update data
@@ -70,7 +63,7 @@ class ESQuery(Query):
         """
         pass
 
-    async def list(self):
+    async def list(self, type_="cluster"):
         """
         show cluster info
         :return:

@@ -7,5 +7,6 @@ class Settings(BasicSettings):
     # ES_HOSTS: list = ["bw:10000", ]
     ES_HOSTS: list = ["es_dev", ]
 
-    INFLUX_HOST = ""
-    INFLUX_PORT = ""
+    INFLUX_HOST = "localhost"
+    INFLUX_PORT = 8086
+    INFLUX_DB = "my_db"

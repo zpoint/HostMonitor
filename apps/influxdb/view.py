@@ -3,20 +3,19 @@ from sanic_restplus import Resource
 from libs.rest import RestAssoc
 from libs.exception import Code
 from query.query_factory import QueryFactory
-ns = RestAssoc.ns_es
+ns = RestAssoc.ns_influx
 api = RestAssoc.api
-name = "es"
+name = "influx"
 
 
 @ns.route('/node')
-class ESNodes(Resource):
+class InFluxNodes(Resource):
     @ns.doc('list_all')
     async def get(self, request):
         """
-        list all nodes in a cluster
+        list all nodes in a cluster(Not implemented yet, The free version does not support cluster(太穷了😢))
         """
-        query = QueryFactory.create_query(name)
-        return await query.list()
+        raise Code.CurrentlyNotSupport
 
     @ns.doc('malloc_new_node')
     async def post(self, request):
@@ -26,21 +25,48 @@ class ESNodes(Resource):
         raise Code.CurrentlyNotSupport
 
 
-@ns.route('/index')
-class ESList(Resource):
-    @ns.doc('list_all_index')
+@ns.route('/db')
+class InFluxDBs(Resource):
+    @ns.doc('list_all_database')
     async def get(self, request):
         """
-        list all indexes in a cluster
+        list all databases
+        """
+        query = QueryFactory.create_query(name, {"db": "default"})
+        return await query.list()
+
+    @ns.doc('malloc_new_database')
+    @ns.param("json body", "json body", _in="body", example={"db": "testdb"})
+    async def post(self, request):
+        """
+        create a new database
+        """
+        query = QueryFactory.create_query(name, request.json)
+        return await query.create_meta()
+
+    @ns.doc('delete_database')
+    @ns.param("json body", "json body", _in="body", example={"db": "testdb"})
+    async def delete(self, request):
+        """
+        drop a database
+        """
+        query = QueryFactory.create_query(name, request.json)
+        return await query.delete_meta()
+
+
+@ns.route('/<db:string>/<measurement:string>')
+@ns.route('/<db:string>')
+class InFluxList(Resource):
+    @ns.doc('list_all_measurement')
+    async def get(self, request, db, measurement):
+        """
+        list all measurements in a db
         """
         query = QueryFactory.create_query(name, request.json)
         return await query.search_meta()
 
-    @ns.doc('create_new_index')
-    @ns.param("json body", "json body", _in="body", example={
-        "index": "twitter", 'settings': {'number_of_shards': 1},
-        'mappings': {'properties': {'field1': {'type': 'text'}}}})
-    async def post(self, request):
+    @ns.doc('create_new_measurement')
+    async def put(self, request, db, measurement):
         """
         create a new index in a cluster
         """
@@ -51,7 +77,7 @@ class ESList(Resource):
 
     @ns.doc('delete_given_index')
     @ns.param("index", "index name", _in="query", default="twitter")
-    async def delete(self, request):
+    async def delete(self, request, measurement):
         """
         delete a given index
         """
@@ -64,9 +90,8 @@ class ESList(Resource):
             return res
 
 
-@ns.route('/<index:string>')
-@ns.param('index', 'The index name')
-class ESData(Resource):
+@ns.route('/<db:string>/<measurement:string>/crud')
+class InFluxData(Resource):
     """act as a proxy and delegate your CRUD query to the real backend"""
 
     @ns.doc('get_data')
@@ -85,7 +110,7 @@ class ESData(Resource):
 
     @ns.doc('update_data')
     async def put(self, request, index):
-        """forward DSL to given index"""
+        """insert data"""
         request.json["index"] = index
         query = QueryFactory.create_query(name, request.json)
         return await query.update_data()

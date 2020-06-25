@@ -42,13 +42,6 @@ class Query(object):
         """
         raise Code.CurrentlyNotSupport
 
-    async def insert_meta(self):
-        """
-        insert meta data
-        :return:
-        """
-        raise Code.CurrentlyNotSupport
-
     async def update_data(self):
         """
         update data
@@ -71,7 +64,7 @@ class Query(object):
         raise Code.CurrentlyNotSupport
 
     @abc.abstractmethod
-    async def list(self):
+    async def list(self, type_="cluster"):
         """
         show cluster info
         :return:

@@ -4,3 +4,4 @@ sanic-envconfig==1.3.3
 sanic-restplus==0.5.3.post3
 environs==8.0.0
 aioelasticsearch==0.7.0
+aioinflux==0.9.0

@@ -29,6 +29,7 @@ class RestAssoc(object):
     api: Api = Api(version='1.0', title='HostMonitor API',
                    description='monitor metadata of influxdb and ES, rest api support for CRUD metadata and results')
     ns_es: namespace = api.namespace('es', description='ElasticSearch operations')
+    ns_influx: namespace = api.namespace('influx', description='InfluxDB operations')
     api._default_error_handler = customer_rest_exception_handler
 
 
