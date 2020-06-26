@@ -61,7 +61,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
     cd HostMonitor
     python3 -m pip install -r requirements.txt
 
-# test
+# Unittest
 
     cd HostMonitor
     python3 -m unittest
@@ -97,7 +97,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 - [x] docker file
 - [x] env specific es host and influxdb host
 
-# more
+# More
 
 * [elasticsearch install](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html)
 * [jvm memory error](https://github.com/docker-library/elasticsearch/issues/131)
