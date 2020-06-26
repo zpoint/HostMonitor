@@ -57,6 +57,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 
 # Install
 
+    git clone https://github.com/zpoint/HostMonitor.git
     cd HostMonitor
     python3 -m pip install -r requirements.txt
 
@@ -67,14 +68,17 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 
 # Run
 
+    # Or you can run with docker below
     # require python3.6+
     python3 main.py --env=local
     # browser open http://localhost:8000/
 
 # Docker
 
-    // docker-compose.yml contains a minimal elasticsearch cluster, a influxdb server and a sanic web server
-    // which you can run directly
+    # docker-compose.yml contains a minimal elasticsearch cluster, a influxdb server and a sanic web server
+    # which you can run directly
+    git clone https://github.com/zpoint/HostMonitor.git
+    cd HostMonitor
     docker-compose up
     # browser open http://localhost:8000/
 
@@ -98,4 +102,4 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 * [elasticsearch install](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html)
 * [jvm memory error](https://github.com/docker-library/elasticsearch/issues/131)
 * [docker setup](https://docs.docker.com/compose/gettingstarted/)
-* [docker compose](https://github.com/elastic/elasticsearch/blob/master/distribution/docker/docker-compose.yml)
+* [docker compose](https://github.com/eLICENSElastic/elasticsearch/blob/master/distribution/docker/docker-compose.yml)
