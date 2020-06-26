@@ -72,7 +72,6 @@ class InfluxAutoRestTests(InfluxAutoRestTestsBase):
         # list all field keys and tag keys
         request, response = app.test_client.get('/influx/%s/%s' % (self.database_name, self.measurement_name))
         data = json.loads(response.text)
-        print("data", data)
         tag_keys = {i[0] for i in data["tag_keys"]["values"]}
         field_keys = data["field_keys"]["values"][0]
         self.assertIn("host", tag_keys)

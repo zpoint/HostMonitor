@@ -11,7 +11,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 
 # 流程
 
-用户请求 -> 网关 -> api server -> 权限校验 -> 进入接口代码 -> 路径定位操作的数据库类型,实例 -> 生成Query实例 -> 解析请求body和方法定位到具体的操作 -> 生成 Operator 实例 -> Operator 调用 Query 方法得到结果 -> 经过中间件格式化 -> 返回给用户
+用户请求 -> 网关 -> api server -> 权限校验 -> 进入接口代码 -> parser根据路径和参数解析 -> 生成 Operator 实例 -> Operator 调用 QueryFactory 生成 Query 实例, 并调其方法得到结果 -> 经过中间件格式化 -> 返回给用户
 
 * Operator 可以是查询, 添加修改, 拼接, 过滤, 聚合等操作
 * Query 实现具体的查询, 添加修改方法, 比如 ESQuery, influxdbQuery, 或者是 mixQuery 同时拿到 ESQuery 和 influxdbQuery 结果聚合后向上层调用者返回
@@ -68,6 +68,14 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 # Run
 
     # require python3.6+
+    python3 main.py --env=local
+    # browser open http://localhost:8000/
+
+# Docker
+
+    // docker-compose.yml contains a minimal elasticsearch cluster, a influxdb server and a sanic web server
+    // which you can run directly
+    docker-compose up
     # browser open http://localhost:8000/
 
 ![example](./example.jpg)
@@ -82,9 +90,12 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 - [x] operator
 - [x] unittest
 - [x] directory document
-- [ ] docker file
+- [x] docker file
+- [x] env specific es host and influxdb host
 
 # more
 
 * [elasticsearch install](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html)
 * [jvm memory error](https://github.com/docker-library/elasticsearch/issues/131)
+* [docker setup](https://docs.docker.com/compose/gettingstarted/)
+* [docker compose](https://github.com/elastic/elasticsearch/blob/master/distribution/docker/docker-compose.yml)

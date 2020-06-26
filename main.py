@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sanic import Sanic
 from environs import Env
-from config.settings import Settings, args, debug
+from config.settings import Settings, args, debug, env_cover
 from libs.middlewares import setup_middlewares
 from libs.exception import customer_exception_handler
 from libs.http_util import setup_http
@@ -15,7 +15,7 @@ unittest need to move app statement to main block
 """
 env = Env()
 env.read_env()
-
+env_cover()
 log_config = get_log_config(Settings)
 app = Sanic(Settings.PROJECT_NAME, log_config=log_config)
 app.config.from_object(Settings)
@@ -29,7 +29,7 @@ setup_routes(app)
 
 if __name__ == "__main__":
     app.run(
-        host=args.host,
+        host=Settings.HOST or args.host,
         port=args.port,
         debug=debug,
         access_log=debug,
