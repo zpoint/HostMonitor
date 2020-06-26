@@ -70,7 +70,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 
     # Or you can run with docker below
     # require python3.6+
-    python3 main.py --env=local
+    ES_HOST=localhost ES_PORT=9200 INFLUX_HOST=localhost INFLUX_PORT=8086 python3 main.py --env=local
     # browser open http://localhost:8000/
 
 # Docker
