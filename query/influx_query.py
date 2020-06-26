@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import aioinflux.client
 from .base_query import Query
 from libs.db_util import DBUtil
 from libs.code import Code
@@ -18,7 +19,11 @@ class InfluxQuery(Query):
         if self.type_ == "database":
             return await self.db_instance.create_database(db=self.db)
         elif self.type_ == "measurement":
-            return await self.db_instance.write(self.parsed_query_param)
+            try:
+                res = await self.db_instance.write(self.parsed_query_param)
+                return {"result": res}
+            except aioinflux.client.InfluxDBWriteError:
+                raise Code.DBNotExist(self.db)
         raise NotImplementedError("type: %s not implemented" % (self.type_, ))
 
     async def create_data(self):
@@ -65,7 +70,11 @@ class InfluxQuery(Query):
             return await self.db_instance.drop_database(db=self.db)
         elif self.type_ == "measurement":
             measurement = self.meta_param["measurement"]
-            return await self.db_instance.drop_measurement(measurement)
+            try:
+                res = await self.db_instance.drop_measurement(measurement)
+                return res
+            except aioinflux.client.InfluxDBWriteError:
+                raise Code.DBNotExist(self.db)
         raise NotImplementedError("type: %s not implemented" % (self.type_, ))
 
     async def delete_data(self):
@@ -84,4 +93,14 @@ class InfluxQuery(Query):
             return await self.db_instance.show_databases()
         elif self.type_ == "measurement":
             return await self.db_instance.show_measurements()
+        elif self.type_ == "field":
+            try:
+                res1 = await self.db_instance.show_tag_keys(self.meta_param["measurement"])
+                res1 = res1["results"][0]["series"][0]
+                res2 = await self.db_instance.show_field_keys(self.meta_param["measurement"])
+                res2 = res2["results"][0]["series"][0]
+                result = {"tag_keys": res1, "field_keys": res2}
+                return result
+            except aioinflux.client.InfluxDBError:
+                raise Code.DBNotExist(self.db)
         raise NotImplementedError("type: %s not implemented" % (self.type_, ))

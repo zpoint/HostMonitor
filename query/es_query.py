@@ -10,7 +10,7 @@ class ESQuery(Query):
         :return:
         """
         index = self.meta_param["index"]
-        return await DBUtil.es.index( index, self.parsed_query_param)
+        return await DBUtil.es.index(index, self.parsed_query_param)
 
     async def create_data(self):
         """
@@ -31,7 +31,8 @@ class ESQuery(Query):
         search data
         :return:
         """
-        pass
+        index = self.meta_param["index"]
+        return await DBUtil.es.search(index, self.parsed_query_param)
 
     async def update_meta(self):
         """
@@ -60,7 +61,8 @@ class ESQuery(Query):
         delete data
         :return:
         """
-        pass
+        index = self.meta_param["index"]
+        return await DBUtil.es.delete_by_query(index, self.parsed_query_param)
 
     async def list(self):
         """
@@ -68,3 +70,7 @@ class ESQuery(Query):
         :return:
         """
         return await DBUtil.es.nodes.info()
+
+    async def insert_data(self):
+        index = self.meta_param["index"]
+        return await DBUtil.es.index(index, self.parsed_query_param)

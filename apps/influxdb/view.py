@@ -47,7 +47,7 @@ class InFluxDBs(InfluxResource):
         """
         drop a database
         """
-        return await self.get_result("delete_meta", request.json, type="database")
+        return await self.get_result("delete_meta", request.json, type="database", **request.json)
 
 
 @ns.route('/<db:string>')
@@ -101,24 +101,7 @@ class InFluxList(InfluxResource):
         """
         return await self.get_result("delete_meta", db=db, measurement=measurement, type="measurement")
 
-
-@ns.route('/<db:string>/<measurement:string>/crud')
-@ns.param('db', 'The database name', default="testdb")
-@ns.param('measurement', 'The measurement name', default="cpu_load")
-class InFluxData(InfluxResource):
-    """act as a proxy and delegate your CRUD query to the real backend"""
-
-    @ns.doc('get_data')
+    @ns.doc('get_field')
     async def get(self, request, db, measurement):
-        """Fetch given resource in measurement"""
-        return await self.get_result("search_data", request.json, db=db, measurement=measurement)
-
-    @ns.doc('delete_data')
-    async def delete(self, request, db, measurement):
-        """Delete data in a given measurement by it's query"""
-        return await self.get_result("delete_data", request.json, db=db, measurement=measurement)
-
-    @ns.doc('update_data')
-    async def put(self, request, db, measurement):
-        """insert data"""
-        return await self.get_result("update_data", request.json, db=db, measurement=measurement)
+        """list all tag_keys and field_keys in a measurement"""
+        return await self.get_result("list", request.json, db=db, measurement=measurement, type="field")

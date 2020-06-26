@@ -36,7 +36,7 @@ class ESList(ESResource):
     @ns.doc('create_new_index')
     @ns.param("json body", "json body", _in="body", example={
         "index": "twitter", 'settings': {'number_of_shards': 1},
-        'mappings': {'properties': {'field1': {'type': 'text'}}}})
+        'mappings': {'properties': {'user': {'type': 'text'}, "post_date": {'type': 'date'}, "message": {'type': 'text'}}}})
     async def post(self, request):
         """
         create a new index in a cluster
@@ -60,14 +60,15 @@ class ESData(ESResource):
     @ns.doc('get_data')
     async def get(self, request, index):
         """Fetch given resource"""
-        return await self.get_result("search_data", request.json)
+        return await self.get_result("search_data", request.json, index=index)
 
-    @ns.doc('delete_data')
+    @ns.doc('delete_index')
     async def delete(self, request, index):
-        """Delete data in a given index by it's query"""
-        return await self.get_result("delete_data", request.json)
+        """Delete a given index"""
+        return await self.get_result("delete_meta", index=index)
 
-    @ns.doc('update_data')
+    @ns.doc('insert_data')
+    @ns.param("json body", "json body", _in="body", example={"user": "kimchy", "post_date": "2009-11-15T14:12:12", "message": "trying out Elasticsearch"})
     async def put(self, request, index):
-        """forward DSL to given index"""
-        return await self.get_result("update_data", request.json)
+        """Insert document, forward DSL to given index"""
+        return await self.get_result("insert_data", request.json, index=index)

@@ -42,6 +42,12 @@ class MissingRequiredParam(ValidationError):
         self.message = u"缺少必填参数: %s" % (param, )
 
 
+class DBNotExist(ValidationError):
+    def __init__(self, param, code=50002, **kwargs):
+        super().__init__(code=code, **kwargs)
+        self.message = u"数据库 %s 不存在" % (param, )
+
+
 class Code(metaclass=CodeType):
 
     SUCCESS = (200, 'SUCCESS')
@@ -52,3 +58,5 @@ class Code(metaclass=CodeType):
 
     CurrentlyNotSupport = (50000, "当前未实现该操作")
     MissingRequiredParam = MissingRequiredParam
+    DBNotExist = DBNotExist
+

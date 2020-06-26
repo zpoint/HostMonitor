@@ -53,15 +53,24 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
     │   └── query_factory.py
     ├── requirements.txt
     └── routes.py // 路由
+    └── unittest_ // 单元测试
 
 # Install
 
+    cd HostMonitor
     python3 -m pip install -r requirements.txt
+
+# test
+
+    cd HostMonitor
+    python3 -m unittest
 
 # Run
 
     # require python3.6+
     # browser open http://localhost:8000/
+
+![example](./example.jpg)
 
 # TO DO
 - [x] framework
@@ -71,7 +80,7 @@ monitor metadata of influxdb and ES, rest api support for CRUD metadata and resu
 - [x] json body parser
 - [x] query factory / abstract method
 - [x] operator
-- [ ] unittest
+- [x] unittest
 - [x] directory document
 - [ ] docker file
 
