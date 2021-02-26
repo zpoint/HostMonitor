@@ -1,4 +1,4 @@
-aiohttp==3.6.2
+aiohttp==3.7.4
 sanic==19.12.2
 sanic-envconfig==1.3.3
 sanic-restplus==0.5.3.post3
